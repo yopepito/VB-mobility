@@ -1,0 +1,13 @@
+# Machine-local Claude Code settings (absolute paths, not portable)
+.claude/settings.local.json
+
+# OS / editor noise
+Thumbs.db
+Desktop.ini
+.DS_Store
+*.swp
+*~
+
+# Node (this project has no dependencies, but keep it safe)
+node_modules/
+npm-debug.log*

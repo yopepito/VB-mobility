@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VB Mobility — Vermietung von VTC-Fahrzeugen · Waadt &amp; Genf</title>
+<meta name="description" content="VB Mobility vermietet zugelassene VTC-Fahrzeuge — Bewilligung und Fahrtenschreiber inklusive, Berufsversicherung. Fahren, ohne ein Auto zu kaufen. Waadt & Genf.">
+</head>
+<body>
+<!--
+  ============================================================
+  VB MOBILITY — VOR DEM ONLINE-GANG ZU ERGÄNZEN
+  1) WhatsApp-Nummer: ALLE "41000000000" (wa.me-Links) IN DIESER DATEI durch die echte
+     Nummer ersetzen, internationales Format ohne + oder Leerzeichen.
+     Bsp.: 41791234567 für +41 79 123 45 67. Diese Nummer muss AUSSERDEM einmalig in
+     fleet-loader.js (Konstante WA_NUMBER) gesetzt werden — siehe FLEET_ADMIN.md.
+  2) Angezeigte Telefonnummer: "+41 00 000 00 00"
+  3) E-Mail: "contact@vb-mobility.ch"
+  4) Preise und Fahrzeuge werden nicht mehr hier bearbeitet: sie kommen aus dem Google Sheet.
+     Der Sheet-Link wird EINMALIG in fleet-loader.js (Konstante SHEET_CSV_URL) eingefügt,
+     nicht in dieser Datei — siehe FLEET_ADMIN.md.
+  Der Name "VB Mobility" ist zentralisiert (--brand-name): um ihn
+  später zu ändern, die Vorkommen im Header und Footer ersetzen.
+  Dies ist eine Übersetzung von site-vb-mobility.html (Französisch) —
+  alle drei Sprachdateien bei Änderungen am Marketingtext synchron halten
+  (die Preise kommen aus dem Google Sheet und sind sprachunabhängig, siehe FLEET_ADMIN.md).
+  ============================================================
+-->
+<style>
+  /* Polices hebergees en local : aucune requete vers un tiers, voir fonts/LICENSE.md */
+  @font-face{font-family:'Lora';src:url('fonts/lora-latin.woff2') format('woff2');
+    font-weight:400 700;font-style:normal;font-display:swap;}
+  @font-face{font-family:'IBM Plex Sans';src:url('fonts/ibm-plex-sans-latin.woff2') format('woff2');
+    font-weight:400 700;font-style:normal;font-display:swap;}
+
+  :root{
+    --paper:oklch(96% 0.02 80); --surface:oklch(99% 0.005 80); --surface-2:oklch(93% 0.02 80);
+    --ink:oklch(28% 0.03 50); --brand:oklch(47% 0.11 190); --brand-2:oklch(62% 0.11 190);
+    --accent:oklch(62% 0.11 190); --accent-strong:oklch(47% 0.11 190); --amber:oklch(70% 0.10 70);
+    --text:oklch(28% 0.03 50); --muted:oklch(45% 0.02 50); --line:oklch(88% 0.02 70); --line-2:oklch(82% 0.02 70);
+    --hero-bg:oklch(20% 0.03 50); --hero-bg-2:oklch(26% 0.03 50); --hero-text:oklch(96% 0.01 80); --hero-muted:oklch(78% 0.02 60);
+    --radius:16px; --radius-sm:100px;
+    --maxw:1180px;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono","Segoe UI Mono",Consolas,monospace;
+    --sans:"IBM Plex Sans","Segoe UI",-apple-system,BlinkMacSystemFont,"Helvetica Neue",Arial,sans-serif;
+    --serif:"Lora",Georgia,"Times New Roman",serif;
+    --shadow:0 1px 2px oklch(28% 0.03 50 / .05),0 12px 30px -12px oklch(28% 0.03 50 / .13);
+    --shadow-lg:0 24px 60px -20px oklch(28% 0.03 50 / .30);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--text);font-family:var(--sans);
+       font-size:17px;line-height:1.6;-webkit-font-smoothing:antialiased}
+  h1,h2,h3{margin:0;font-family:var(--serif);font-weight:600;color:var(--ink);text-wrap:balance;letter-spacing:-.02em;line-height:1.1}
+  p{margin:0}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;
+           color:var(--accent-strong);font-weight:600}
+  .lead{color:var(--muted);font-size:19px;max-width:60ch}
+  section{padding:88px 0;border-top:1px solid var(--line)}
+  .sec-head{max-width:64ch;margin-bottom:44px}
+  .sec-head h2{font-size:clamp(28px,4vw,40px);font-weight:800;margin:12px 0 14px}
+
+  .btn{display:inline-flex;align-items:center;gap:9px;font-weight:700;font-size:16px;
+       padding:14px 26px;border-radius:var(--radius-sm);border:1px solid transparent;cursor:pointer;
+       transition:transform .16s ease,box-shadow .16s ease,background .16s ease}
+  .btn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+  .btn-primary{background:var(--accent);color:oklch(22% 0.04 190)}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 26px -10px oklch(62% 0.11 190 / .55)}
+  .btn-ghost{background:transparent;color:var(--hero-text);border-color:rgba(255,255,255,.28)}
+  .btn-ghost:hover{border-color:var(--hero-text);transform:translateY(-2px)}
+  .btn-outline{background:transparent;color:var(--brand);border-color:var(--line-2)}
+  .btn-outline:hover{border-color:var(--brand);transform:translateY(-2px)}
+  .btn-wa{background:#25D366;color:#04220f}
+  .btn-wa:hover{transform:translateY(-2px);box-shadow:0 12px 26px -10px rgba(37,211,102,.6)}
+
+  /* NAV */
+  .nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--paper) 86%,transparent);
+       backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav-in{display:flex;align-items:center;gap:22px;height:70px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;color:var(--ink);font-size:19px;letter-spacing:-.02em}
+  .brand .mark{width:34px;height:34px;flex:none}
+  .nav-links{display:flex;gap:26px;margin-left:auto}
+  .nav-links a{font-size:15px;color:var(--muted);font-weight:600}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{margin-left:8px;padding:9px 18px;font-size:14.5px;white-space:nowrap}
+  .lang-switch{display:flex;gap:4px;margin-left:6px}
+  .lang-switch a{font-family:var(--mono);font-size:12px;font-weight:700;padding:6px 9px;border-radius:7px;color:var(--muted);border:1px solid transparent}
+  .lang-switch a:hover{color:var(--ink)}
+  .lang-switch a.active{color:var(--ink);background:var(--surface-2);border-color:var(--line-2)}
+
+  /* HERO — commits to a dark "night drive" world in both themes */
+  .hero{background:radial-gradient(120% 130% at 78% 0%,var(--hero-bg-2) 0%,var(--hero-bg) 60%);
+        color:var(--hero-text);border-top:none;position:relative;overflow:hidden;padding:96px 0 0}
+  .hero .wrap{position:relative;z-index:2}
+  .hero-eyebrow{color:oklch(82% 0.10 190)}
+  .hero h1{color:#fff;font-size:clamp(38px,6.2vw,68px);font-weight:800;margin:16px 0 0;max-width:16ch}
+  .hero h1 em{font-style:normal;color:oklch(78% 0.11 190)}
+  .hero p{color:var(--hero-muted);font-size:clamp(17px,2.3vw,21px);max-width:52ch;margin-top:22px}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:34px}
+  .hero-scene{position:relative;height:300px;margin-top:26px}
+  .hero-fade{position:absolute;left:0;right:0;bottom:0;height:120px;
+             background:linear-gradient(to bottom,transparent,var(--paper));z-index:3}
+  .road{position:absolute;left:0;right:0;bottom:0;height:170px;
+        background:linear-gradient(to top,oklch(78% 0.11 190 / .10),transparent);border-top:1px solid oklch(72% 0.04 190 / .20)}
+  .car-hero{position:absolute;left:50%;bottom:40px;transform:translateX(-50%);width:min(680px,92%);z-index:2}
+  .beam{transform-origin:left center;animation:beam 4.5s ease-in-out infinite}
+  @keyframes beam{0%,100%{opacity:.5}50%{opacity:.95}}
+  .streak{position:absolute;bottom:66px;left:-40%;width:40%;height:2px;z-index:1;
+          background:linear-gradient(90deg,transparent,oklch(82% 0.10 190 / .9),transparent);
+          animation:streak 3.2s linear infinite}
+  .streak.s2{bottom:52px;height:1px;animation-duration:4.6s;animation-delay:1.1s;opacity:.6}
+  @keyframes streak{0%{left:-40%}100%{left:120%}}
+
+  /* TRUST STRIP */
+  .trust{background:var(--surface);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .trust-in{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line)}
+  .trust-item{background:var(--surface);padding:22px 20px;display:flex;gap:13px;align-items:center}
+  .trust-item svg{flex:none;color:var(--accent-strong)}
+  .trust-item b{color:var(--ink);display:block;font-size:15px}
+  .trust-item span{color:var(--muted);font-size:13.5px}
+
+  /* ADVANTAGES */
+  .adv-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+  .adv{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:26px 24px;
+       transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+  .adv:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:var(--line-2)}
+  .adv .ic{width:44px;height:44px;border-radius:10px;background:color-mix(in srgb,var(--accent) 15%,transparent);
+           color:var(--accent-strong);display:grid;place-items:center;margin-bottom:16px}
+  .adv h3{font-size:19px;font-weight:700;margin-bottom:7px}
+  .adv p{color:var(--muted);font-size:15.5px}
+
+  /* FLEET */
+  .fleet{background:var(--surface-2)}
+  .fleet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px}
+  .vcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+         display:flex;flex-direction:column;transition:transform .18s ease,box-shadow .18s ease}
+  .vcard:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+  .vcard.soon{opacity:.72;border-style:dashed}
+  .vcard.soon .vcar{filter:grayscale(1);opacity:.55}
+  .vstage{position:relative;background:
+      radial-gradient(90% 120% at 50% 15%,color-mix(in srgb,var(--brand) 12%,var(--surface)) 0%,var(--surface) 70%);
+      padding:26px 22px 10px;border-bottom:1px solid var(--line)}
+  .vstage .plate{position:absolute;top:16px;left:18px;font-family:var(--mono);font-size:12px;font-weight:700;
+      letter-spacing:.06em;color:var(--brand);background:var(--surface);border:1px solid var(--line-2);
+      border-radius:5px;padding:3px 8px}
+  .vstage .tag{position:absolute;top:16px;right:18px;font-family:var(--mono);font-size:11px;font-weight:700;
+      letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:100px}
+  .tag.dispo{color:var(--accent-strong);background:color-mix(in srgb,var(--accent) 15%,transparent)}
+  .tag.soon-t{color:var(--muted);background:var(--surface-2);border:1px solid var(--line)}
+  .vcar{display:block;width:100%;height:120px;color:var(--brand)}
+  .vbody{padding:20px 22px 24px;display:flex;flex-direction:column;gap:15px;flex:1}
+  .vhead{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  .vhead h3{font-size:20px;font-weight:800}
+  .vhead .cat{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.05em}
+  .specs{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;border-top:1px solid var(--line);
+         border-bottom:1px solid var(--line);padding:15px 0}
+  .spec{display:flex;gap:9px;align-items:center}
+  .spec svg{color:var(--muted);flex:none}
+  .spec .k{font-size:12px;color:var(--muted);display:block;line-height:1.2}
+  .spec .v{font-family:var(--mono);font-size:13.5px;color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+  .price-row{display:flex;align-items:flex-end;justify-content:space-between;margin-top:auto;gap:12px}
+  .price .amt{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;line-height:1}
+  .price .amt small{font-size:15px;color:var(--muted);font-weight:600}
+  .price .per{font-size:12.5px;color:var(--muted);font-family:var(--mono)}
+  .vcard .btn{width:100%;justify-content:center}
+
+  /* AVAILABILITY (rendered by fleet-loader.js) */
+  .avail{border-top:1px solid var(--line);padding-top:13px;display:flex;flex-direction:column;gap:10px}
+  .avail-state{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted)}
+  .avail-state svg{flex:none;width:15px;height:15px}
+  .avail-state.is-free{color:var(--accent-strong);font-weight:600}
+  .avail-dates{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .avail-dates label{display:flex;flex-direction:column;gap:4px}
+  .avail-dates span{font-size:11.5px;color:var(--muted);font-family:var(--mono);letter-spacing:.04em;text-transform:uppercase}
+  .avail-dates input{font-family:inherit;font-size:14px;color:var(--ink);background:var(--surface);
+      border:1px solid var(--line-2);border-radius:var(--radius-sm);padding:8px 9px;width:100%;min-height:40px}
+  .avail-dates input:focus-visible{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+
+  /* STEPS */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;counter-reset:s}
+  .step{position:relative;padding-top:20px;border-top:2px solid var(--line-2)}
+  .step .n{counter-increment:s;font-family:var(--mono);font-size:13px;color:var(--accent-strong);font-weight:700}
+  .step .n::before{content:"0" counter(s)}
+  .step h3{font-size:20px;font-weight:700;margin:8px 0 8px}
+  .step p{color:var(--muted);font-size:15.5px}
+
+  /* PRICING BANNER */
+  .pricing .box{background:linear-gradient(135deg,var(--hero-bg-2),var(--hero-bg));color:var(--hero-text);
+       border-radius:20px;padding:46px;display:grid;grid-template-columns:1.2fr 1fr;gap:30px;align-items:center}
+  .pricing h2{color:#fff;font-size:clamp(26px,3.4vw,36px);font-weight:800}
+  .pricing .box p{color:var(--hero-muted);margin-top:12px}
+  .pricing .big{text-align:right}
+  .pricing .big .amt{font-family:var(--mono);font-size:clamp(44px,7vw,64px);font-weight:700;color:oklch(78% 0.11 190);line-height:1;font-variant-numeric:tabular-nums}
+  .pricing .big .amt small{font-size:22px;color:var(--hero-muted)}
+  .pricing .big .per{font-family:var(--mono);color:var(--hero-muted);font-size:14px;margin-top:6px}
+  .pricing ul{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px 20px}
+  .pricing li{font-size:15px}
+  .pricing li::before{content:"✓";color:oklch(78% 0.11 190);font-weight:800;margin-right:8px}
+
+  /* ABOUT */
+  .about-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:44px;align-items:center}
+  .about p{color:var(--muted);font-size:16.5px;margin-bottom:16px}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .fact{background:var(--surface);padding:22px 20px}
+  .fact .v{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--brand);font-variant-numeric:tabular-nums}
+  .fact .k{font-size:13px;color:var(--muted);margin-top:4px}
+
+  /* FAQ */
+  .faq{max-width:820px}
+  details{border-bottom:1px solid var(--line)}
+  summary{cursor:pointer;list-style:none;padding:20px 44px 20px 0;font-weight:700;color:var(--ink);
+          font-size:17px;position:relative}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"";position:absolute;right:8px;top:26px;width:11px;height:11px;
+     border-right:2px solid var(--accent-strong);border-bottom:2px solid var(--accent-strong);
+     transform:rotate(45deg);transition:transform .2s}
+  details[open] summary::after{transform:rotate(-135deg);top:30px}
+  details p{color:var(--muted);padding:0 0 22px;font-size:16px;max-width:70ch}
+
+  /* CONTACT */
+  .contact{background:var(--surface)}
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+  .contact h2{font-size:clamp(28px,4vw,40px);font-weight:800;margin-bottom:14px}
+  .contact .lead{margin-bottom:26px}
+  .clines{display:flex;flex-direction:column;gap:14px}
+  .cline{display:flex;align-items:center;gap:13px;font-size:16px}
+  .cline svg{color:var(--accent-strong);flex:none}
+  .cline .fill{font-family:var(--mono);font-size:14px;color:var(--muted);
+     background:color-mix(in srgb,var(--amber) 16%,transparent);padding:2px 7px;border-radius:5px}
+  .contact-card{background:var(--surface-2);border:1px solid var(--line);border-radius:20px;padding:34px;text-align:center}
+  .contact-card .btn{width:100%;justify-content:center;margin-bottom:12px;font-size:17px;padding:16px}
+  .contact-card .fine{font-size:13px;color:var(--muted);margin-top:8px}
+
+  .foot-langs{display:flex;gap:6px;margin-top:10px}
+  .foot-langs a{font-family:var(--mono);font-size:12px;font-weight:700;padding:5px 9px;border-radius:7px;
+      color:var(--hero-muted);border:1px solid oklch(72% 0.04 190 / .25)}
+  .foot-langs a.active{color:#fff;border-color:var(--hero-muted)}
+
+  /* FOOTER */
+  footer{background:var(--hero-bg);color:var(--hero-muted);padding:44px 0;border-top:1px solid oklch(72% 0.04 190 / .20)}
+  .foot-in{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+  footer .brand{color:#fff}
+  footer .brand .sub{display:block;font-size:12.5px;color:var(--hero-muted);font-weight:500;letter-spacing:0}
+  .foot-meta{font-family:var(--mono);font-size:12.5px;text-align:right}
+
+  @media (max-width:900px){
+    .trust-in{grid-template-columns:1fr 1fr}
+    .adv-grid,.fleet-grid,.steps{grid-template-columns:1fr 1fr}
+    .pricing .box,.about-grid,.contact-grid{grid-template-columns:1fr;gap:26px}
+    .pricing .big{text-align:left}
+  }
+  @media (max-width:640px){
+    body{font-size:16px}
+    .nav-links{display:none}
+    /* La barre debordait de 142px sur un ecran de 375 : on ne garde en haut
+       que la marque et l'action. Langues et theme sont repris dans le footer. */
+    .nav-in{gap:12px}
+    .lang-switch{display:none}
+    .nav-cta{padding:9px 14px;font-size:14px}
+    .brand{font-size:17px}
+    section{padding:64px 0}
+    .adv-grid,.fleet-grid,.steps,.facts{grid-template-columns:1fr}
+    .trust-in{grid-template-columns:1fr}
+    .pricing .box{padding:30px}
+    .foot-in{flex-direction:column;align-items:flex-start}
+    .foot-meta{text-align:left}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .beam,.streak{animation:none}
+    *{scroll-behavior:auto}
+  }
+</style>
+
+<!-- ============ NAV ============ -->
+<header class="nav">
+  <div class="wrap nav-in">
+    <a class="brand" href="#top" aria-label="VB Mobility, Startseite">
+      <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <rect x="1.2" y="1.2" width="37.6" height="37.6" rx="9" stroke="currentColor" stroke-opacity=".18"/>
+        <path d="M8 25c1.6-4.2 3.3-6.4 5-6.9 2.6-.8 8.4-.8 11 0 1.7.5 3.4 2.7 5 6.9" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M6 25h28" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="13" cy="25" r="2.4" fill="var(--brand)"/><circle cx="27" cy="25" r="2.4" fill="var(--brand)"/>
+      </svg>
+      VB&nbsp;Mobility
+    </a>
+    <nav class="nav-links">
+      <a href="#flotte">Unsere Flotte</a>
+      <a href="#comment">So funktioniert's</a>
+      <a href="#tarifs">Preise</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn btn-primary nav-cta" href="#contact">Kontakt</a>
+    <div class="lang-switch">
+      <a href="site-vb-mobility.html">FR</a>
+      <a href="site-vb-mobility.en.html">EN</a>
+      <a href="site-vb-mobility.de.html" class="active">DE</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<!-- ============ HERO ============ -->
+<section class="hero" style="border-top:none">
+  <div class="wrap">
+    <span class="eyebrow hero-eyebrow">Vermietung von VTC-Fahrzeugen · Waadt &amp; Genf</span>
+    <h1>Fahre VTC <em>ohne Autokauf</em>.</h1>
+    <p>Wir vermieten Dir ein <strong style="color:var(--hero-text)">bereits zugelassenes</strong> Fahrzeug: VTC-Bewilligung und Fahrtenschreiber inklusive, Berufsversicherung, sofort einsatzbereit. Du fährst, Du behältst Deine Einnahmen. Du zahlst wöchentlich, mit vier Wochen zum Start.</p>
+    <div class="hero-cta">
+      <a class="btn btn-wa" href="https://wa.me/41000000000" target="_blank" rel="noopener">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5.2.5.8 1.9.8 2 .1.2.1.3 0 .5-.3.6-.6.8-.8 1-.2.2-.3.3-.1.6.2.3.9 1.4 1.9 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1.2-.2.8-.9 1-1.2.2-.3.4-.2.7-.1.3.1 1.7.8 2 1 .3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+        WhatsApp
+      </a>
+      <a class="btn btn-ghost" href="#flotte">Flotte ansehen</a>
+    </div>
+  </div>
+  <div class="hero-scene" aria-hidden="true">
+    <div class="road"></div>
+    <div class="streak"></div><div class="streak s2"></div>
+    <svg class="car-hero" viewBox="0 0 680 220" fill="none">
+      <defs>
+        <linearGradient id="beamG" x1="0" x2="1"><stop offset="0" stop-color="oklch(78% 0.11 190)" stop-opacity=".55"/><stop offset="1" stop-color="oklch(78% 0.11 190)" stop-opacity="0"/></linearGradient>
+      </defs>
+      <!-- headlight beams -->
+      <path class="beam" d="M118 138 L-40 92 L-40 190 L118 158 Z" fill="url(#beamG)"/>
+      <!-- car silhouette (line-art hatchback) -->
+      <path d="M96 150 C120 108 150 92 198 88 C240 84 300 84 340 86 C384 88 430 96 470 118 C505 137 540 146 574 150"
+            stroke="oklch(72% 0.05 190)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="oklch(72% 0.05 190 / .07)"/>
+      <path d="M96 150 L574 150" stroke="oklch(72% 0.05 190)" stroke-width="3" stroke-linecap="round"/>
+      <path d="M210 92 C214 112 214 130 212 148 M330 86 C332 108 332 128 330 148 M452 110 C458 126 460 138 460 149"
+            stroke="oklch(52% 0.04 190)" stroke-width="2.2" fill="none"/>
+      <path d="M226 96 C270 90 300 90 322 92 L320 118 L228 120 Z" fill="oklch(78% 0.11 190 / .14)" stroke="oklch(78% 0.11 190)" stroke-width="1.4"/>
+      <circle cx="192" cy="164" r="26" fill="none" stroke="oklch(72% 0.05 190)" stroke-width="3"/><circle cx="192" cy="164" r="10" fill="oklch(20% 0.03 50)" stroke="oklch(52% 0.04 190)" stroke-width="2"/>
+      <circle cx="470" cy="164" r="26" fill="none" stroke="oklch(72% 0.05 190)" stroke-width="3"/><circle cx="470" cy="164" r="10" fill="oklch(20% 0.03 50)" stroke="oklch(52% 0.04 190)" stroke-width="2"/>
+      <ellipse cx="118" cy="140" rx="9" ry="6" fill="oklch(96% 0.02 80)"/>
+    </svg>
+    <div class="hero-fade"></div>
+  </div>
+</section>
+
+<!-- ============ TRUST STRIP ============ -->
+<div class="trust">
+  <div class="wrap trust-in">
+    <div class="trust-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg><div><b>VTC-Bewilligung inklusive</b><span>Zugelassenes Fahrzeug + Fahrtenschreiber</span></div></div>
+    <div class="trust-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/></svg><div><b>Berufsversicherung</b><span>Personentransport gedeckt</span></div></div>
+    <div class="trust-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg><div><b>Schweizer Unternehmen</b><span>Registriert · UID CHE-417.114.335</span></div></div>
+    <div class="trust-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg><div><b>Waadt &amp; Genf</b><span>Lausanne · Genf und Umgebung</span></div></div>
+  </div>
+</div>
+
+<!-- ============ ADVANTAGES ============ -->
+<section id="services">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Warum VB Mobility</span>
+      <h2>Das Fahrzeug ist unsere Sache. Das Steuer gehört Dir.</h2>
+      <p class="lead">Das Schwierigste für einen Fahrer ist, ein zugelassenes Auto zu bekommen. Wir beseitigen dieses Hindernis vollständig.</p>
+    </div>
+    <div class="adv-grid">
+      <div class="adv"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 13l2-5a2 2 0 0 1 1.9-1.3h10.2A2 2 0 0 1 19 8l2 5"/><path d="M5 13h14v5H5z"/><circle cx="7.5" cy="18.5" r="1.5" fill="currentColor"/><circle cx="16.5" cy="18.5" r="1.5" fill="currentColor"/></svg></div><h3>Kein Autokauf, kein Papierkram</h3><p>Du musst nicht CHF 20'000 investieren, und Bewilligung sowie Fahrtenschreiber musst Du auch nicht selbst organisieren: alles ist am Fahrzeug bereits in Ordnung. Du mietest, Du fährst, Du behältst Deine Liquidität.</p></div>
+      <div class="adv"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6l7-3Z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Versicherung inklusive</h3><p>Deckung für «entgeltlichen Personentransport» inklusive. Du bist ab der ersten Fahrt geschützt.</p></div>
+      <div class="adv"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h10"/></svg></div><h3>Klarer Mietzins, wöchentlich</h3><p>Ein fixer Preis, ohne Überraschungen, wöchentlich zahlbar — nie ein ganzer Monat im Voraus. Vier Wochen Mindestlaufzeit zu Beginn, danach läuft es frei weiter.</p></div>
+      <div class="adv"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h11a2 2 0 0 1 2 2Z"/></svg></div><h3>Schnell und menschlich</h3><p>Fahrzeug sofort verfügbar, sobald Du es übernimmst. Ein Schweizer Team, direkt über WhatsApp erreichbar — kein Callcenter.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FLEET ============ -->
+<section class="fleet" id="flotte">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Unsere Flotte</span>
+      <h2>Zugelassene, sparsame und zuverlässige Fahrzeuge.</h2>
+      <p class="lead">Jedes Fahrzeug ist VTC-zugelassen und bereit für den professionellen Personentransport. Die Flotte wächst — neue Modelle kommen dazu.</p>
+    </div>
+    <div class="fleet-grid" id="fleet-grid"></div>
+  </div>
+</section>
+
+<!-- ============ STEPS ============ -->
+<section id="comment">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">So funktioniert's</span>
+      <h2>Drei Schritte bis ans Steuer.</h2>
+    </div>
+    <div class="steps">
+      <div class="step"><div class="n"></div><h3>Du kontaktierst uns</h3><p>Per WhatsApp oder Telefon. Wir prüfen, ob Du Deine VTC-Berufskarte hast (Ausweis B121 / LTVTC-Diplom).</p></div>
+      <div class="step"><div class="n"></div><h3>Wir übergeben Dir das Fahrzeug</h3><p>Unterzeichnung eines klaren Mietvertrags. Keine Kaution: Du zahlst einfach Deinen Mietzins im Voraus. Das Fahrzeug ist zugelassen, versichert, einsatzbereit.</p></div>
+      <div class="step"><div class="n"></div><h3>Du fährst und verdienst</h3><p>Du arbeitest mit den Plattformen Deiner Wahl. Deine Einnahmen gehören Dir. Du zahlst Deinen Mietzins jede Woche.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING BANNER ============ -->
+<section class="pricing" id="tarifs">
+  <div class="wrap">
+    <div class="box">
+      <div>
+        <span class="eyebrow" style="color:oklch(82% 0.10 190)">Preise</span>
+        <h2>Ein Mietzins, alles inklusive, ohne Überraschungen.</h2>
+        <p>Das zugelassene Fahrzeug, die Berufsversicherung und die Grundwartung sind inbegriffen. Treibstoff und Deine persönlichen Kosten gehen zu Deinen Lasten.</p>
+        <ul>
+          <li>VTC-Bewilligung + Fahrtenschreiber</li>
+          <li>Berufsversicherung inklusive</li>
+          <li>Grundwartung</li>
+          <li>Wöchentliche Zahlung · 4 Wochen Mindestlaufzeit, danach frei</li>
+          <li><strong>Keine Kaution</strong> — nur der Mietzins im Voraus</li>
+          <li>Direkter WhatsApp-Support</li>
+        </ul>
+      </div>
+      <div class="big">
+        <div class="per">ab</div>
+        <div class="amt"><span id="price-x">250</span><small>.–</small></div>
+        <div class="per">CHF / Woche</div>
+        <div style="margin-top:18px"><a class="btn btn-primary" href="https://wa.me/41000000000" target="_blank" rel="noopener">Verfügbarkeit anfragen</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ ABOUT ============ -->
+<section id="apropos">
+  <div class="wrap about-grid">
+    <div class="about">
+      <span class="eyebrow">Über uns</span>
+      <h2 style="font-size:clamp(26px,3.4vw,36px);font-weight:800;margin:12px 0 18px">Ein Schweizer Mobilitätsunternehmen im Dienst der Fahrer.</h2>
+      <p>VB Mobility Sàrl ist ein Schweizer Unternehmen für die Vermietung von VTC-Fahrzeugen mit Sitz in der Westschweiz. Unser Auftrag: professionellen Fahrern zugelassene, zuverlässige und einsatzbereite Fahrzeuge in den Kantonen Waadt und Genf zur Verfügung zu stellen.</p>
+      <p>Wir sind überzeugt: Ein guter Fahrer sollte kein Kapital in ein Auto binden müssen, nur um arbeiten zu können. Wir kümmern uns um Fahrzeug, Zulassung und Versicherung — Du konzentrierst Dich auf die Strasse.</p>
+      <p>Unser langfristiges Ziel: unsere Fahrer zu immer mehr Unabhängigkeit zu begleiten — nicht nur für die Dauer einer Miete, sondern langfristig.</p>
+    </div>
+    <div class="facts">
+      <div class="fact"><div class="v">2</div><div class="k">Abgedeckte Kantone (VD · GE)</div></div>
+      <div class="fact"><div class="v">100 %</div><div class="k">VTC-zugelassene Fahrzeuge</div></div>
+      <div class="fact"><div class="v">Täglich</div><div class="k">WhatsApp-Support</div></div>
+      <div class="fact"><div class="v">CHE</div><div class="k">Im Handelsregister eingetragen</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section id="faq">
+  <div class="wrap">
+    <div class="sec-head"><span class="eyebrow">Häufige Fragen</span><h2>Alles, was Du vor dem Losfahren wissen musst.</h2></div>
+    <div class="faq">
+      <details open><summary>Brauche ich bereits meine Berufskarte?</summary><p>Ja. Du musst Deine Berufskarte als Fahrer besitzen (Ausweis B121, LTVTC-Diplom in Genf oder kantonale Prüfung in Waadt). Bist Du noch in der Ausbildung, melde Dich trotzdem — wir können die Übergabe im Voraus planen.</p></details>
+      <details><summary>Welche Plattformen kann ich nutzen?</summary><p>Alle, die in Deinem Kanton zugelassen sind. Du bist frei, für wen Du willst zu fahren: Deine Fahrten und Einnahmen gehören ganz Dir.</p></details>
+      <details><summary>Wie lange muss ich mich verpflichten?</summary><p>Vier Wochen zum Start. Nach diesem ersten Monat läuft es so lange weiter, wie Du willst, und Du kannst mit einfacher Kündigungsfrist aufhören. Und Du zahlst wöchentlich — nie einen ganzen Monat im Voraus.</p></details>
+      <details><summary>Was ist im Mietzins enthalten?</summary><p>Das zugelassene Fahrzeug (VTC-Bewilligung + Fahrtenschreiber), die Berufsversicherung und die Grundwartung. Treibstoff und Deine persönlichen Kosten gehen zu Deinen Lasten.</p></details>
+      <details><summary>Muss ich eine Kaution hinterlegen?</summary><p>Nein, keine Kaution. Du zahlst einfach Deinen Mietzins im Voraus: eine Woche, wenn Du wöchentlich zahlst, einen halben Monat, wenn Du monatlich zahlst. Sonst nichts zu blockieren. Das ist der konkreteste Unterschied zu den meisten Vermietern, die zwischen 1'000 und 1'500 CHF blockieren, bevor Du überhaupt losfährst.</p></details>
+      <details><summary>In welchen Regionen seid ihr aktiv?</summary><p>In den Kantonen Waadt und Genf: Lausanne, Genf und Umgebung.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CONTACT ============ -->
+<section class="contact" id="contact">
+  <div class="wrap contact-grid">
+    <div>
+      <span class="eyebrow">Kontakt &amp; Buchung</span>
+      <h2>Bereit loszulegen?</h2>
+      <p class="lead">Schreib uns: Wir antworten schnell, unverbindlich, und sagen Dir sofort, was verfügbar ist.</p>
+      <div class="clines">
+        <div class="cline"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Z"/></svg> WhatsApp — schnelle Antwort</div>
+        <div class="cline"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3 19.5 19.5 0 0 1-6-6 19.8 19.8 0 0 1-3-8.7A2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8.1 9.9a16 16 0 0 0 6 6l1.3-1.2a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2Z"/></svg> Telefon: <a href="tel:+41000000000" class="fill">+41 00 000 00 00</a></div>
+        <div class="cline"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> E-Mail: <a href="mailto:contact@vb-mobility.ch" class="fill">contact@vb-mobility.ch</a></div>
+        <div class="cline"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-5.6-7-11a7 7 0 0 1 14 0c0 5.4-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg> Waadt &amp; Genf</div>
+      </div>
+    </div>
+    <div class="contact-card">
+      <a class="btn btn-wa" href="https://wa.me/41000000000" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.8 4.9-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.6-1.3 1.2-1.8 1.2-.5.1-1 .1-1.7-.1-.4-.1-.9-.3-1.6-.6-2.8-1.2-4.6-4-4.7-4.2-.1-.2-1.1-1.5-1.1-2.8 0-1.3.7-2 .9-2.2.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5.2.5.8 1.9.8 2 .1.2.1.3 0 .5-.3.6-.6.8-.8 1-.2.2-.3.3-.1.6.2.3.9 1.4 1.9 2.3 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1.2-.2.8-.9 1-1.2.2-.3.4-.2.7-.1.3.1 1.7.8 2 1 .3.1.5.2.5.3.1.2.1.7-.1 1.3Z"/></svg>
+        Auf WhatsApp schreiben
+      </a>
+      <a class="btn btn-outline" href="#flotte" style="width:100%;justify-content:center">Flotte ansehen</a>
+      <p class="fine">VB Mobility Sàrl · UID CHE-417.114.335 · Belmont-sur-Lausanne (VD)</p>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap foot-in">
+    <div class="brand" style="color:#fff">
+      <svg class="mark" viewBox="0 0 40 40" fill="none" aria-hidden="true" style="color:oklch(78% 0.02 60)">
+        <rect x="1.2" y="1.2" width="37.6" height="37.6" rx="9" stroke="currentColor" stroke-opacity=".3"/>
+        <path d="M8 25c1.6-4.2 3.3-6.4 5-6.9 2.6-.8 8.4-.8 11 0 1.7.5 3.4 2.7 5 6.9" stroke="#22C1AE" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M6 25h28" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="13" cy="25" r="2.4" fill="oklch(78% 0.02 60)"/><circle cx="27" cy="25" r="2.4" fill="oklch(78% 0.02 60)"/>
+      </svg>
+      <span>VB Mobility<span class="sub">Vermietung von VTC-Fahrzeugen · Westschweiz</span></span>
+      <div class="foot-langs">
+        <a href="site-vb-mobility.html">FR</a>
+        <a href="site-vb-mobility.en.html">EN</a>
+        <a href="site-vb-mobility.de.html" class="active">DE</a>
+      </div>
+    </div>
+    <div class="foot-meta">
+      Waadt &amp; Genf · UID CHE-417.114.335<br>© 2026 VB Mobility Sàrl — Alle Rechte vorbehalten
+    </div>
+  </div>
+</footer>
+
+<script>
+  (function(){
+    // Scroll reveal (respects reduced motion)
+    if(!(window.matchMedia&&window.matchMedia("(prefers-reduced-motion:reduce)").matches)&&"IntersectionObserver"in window){
+      var els=document.querySelectorAll(".adv,.step,.fact");
+      els.forEach(function(el){el.style.opacity="0";el.style.transform="translateY(16px)";el.style.transition="opacity .5s ease, transform .5s ease";});
+      var io=new IntersectionObserver(function(en){en.forEach(function(e){if(e.isIntersecting){e.target.style.opacity="1";e.target.style.transform="none";io.unobserve(e.target);}});},{threshold:.12});
+      els.forEach(function(el){io.observe(el);});
+    }
+  })();
+</script>
+
+<script src="fleet-loader.js"></script>
+<script>
+  FleetLoader.initFleet({
+    lang: "de"
+  });
+</script>
+</body>
+</html>
